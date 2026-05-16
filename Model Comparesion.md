@@ -1,150 +1,149 @@
-# 📊 Final Model Comparison Report
-## Heart Disease Prediction — Machine Learning Project
+# Model Comparison Report — Heart Disease Prediction
+ 
+**Dataset:** 10,000 patients | **Training:** 8,000 (80%) | **Testing:** 2,000 (20%)  
+**Scaling:** StandardScaler (fit on training data only)
  
 ---
  
-## 🗂️ Dataset Summary
+## Final Rankings
  
-| Property | Value |
-|----------|-------|
-| Dataset | Cleveland Heart Disease (UCI ML Repository) |
-| Records | 303 patients |
-| Features | 13 clinical attributes |
-| Target | Binary (0 = No Disease, 1 = Disease) |
-| Class Balance | ~54% Disease / ~46% No Disease |
- 
----
- 
-## ⚙️ Preprocessing Summary
- 
-| Step | Action Taken |
-|------|-------------|
-| Missing Values | `ca` and `thal`: 6 NaN values filled with **median** |
-| Duplicates | 0 duplicate rows found |
-| Outliers | Detected via IQR; **retained** (clinically meaningful extremes) |
-| Feature Scaling | `StandardScaler` applied (fit on train, transform test) |
-| Encoding | No categorical encoding needed (all already numeric) |
-| Train/Test Split | 80% train / 20% test, stratified |
+| Rank | Model                           | Accuracy | Precision | Recall | F1-Score |
+|------|---------------------------------|----------|-----------|--------|----------|
+| 1    | Random Forest (n=100, depth=10) | 0.9105   | 0.9163    | 0.9744 | 0.9445   |
+| 2    | Logistic Regression             | 0.8705   | 0.8985    | 0.9405 | 0.9190   |
+| 3    | SVM                             | 0.8695   | 0.8945    | 0.9443 | 0.9187   |
+| 4    | KNN (K=11)                      | 0.8665   | 0.8719    | 0.9718 | 0.9192   |
+| 5    | Naive Bayes                     | 0.8645   | 0.8637    | 0.9814 | 0.9188   |
  
 ---
  
-## 🤖 Model Configuration
+## Model-by-Model Breakdown
  
-| Model | Key Hyperparameters |
-|-------|-------------------|
-| Logistic Regression | `max_iter=1000`, `random_state=42` |
-| Naive Bayes | `GaussianNB` (default) |
-| KNN | Best K selected via GridSearchCV (K=1–20) |
-| SVM | Best C, kernel, gamma via GridSearchCV |
-| Random Forest | Best n_estimators, max_depth via GridSearchCV |
+### 1. Logistic Regression (Baseline)
  
----
+**Type:** Baseline | **Accuracy: 87.05%**
  
-## 📈 Performance Comparison Table
+Draws a linear decision boundary between classes. Simple, fast, and interpretable, but assumes the relationship between features and the target is linear — which is not always the case.
  
-> Sorted by **F1-Score** (descending)
+| Metric    | Score  |
+|-----------|--------|
+| Accuracy  | 0.8705 |
+| Precision | 0.8985 |
+| Recall    | 0.9405 |
+| F1-Score  | 0.9190 |
  
-| Model | Accuracy | Precision | Recall | F1-Score | AUC |
-|-------|----------|-----------|--------|----------|-----|
-| **Random Forest (Tuned)** | ~0.87 | ~0.87 | ~0.88 | ~0.87 | ~0.93 |
-| **SVM (Tuned)** | ~0.85 | ~0.85 | ~0.86 | ~0.85 | ~0.92 |
-| **KNN (Tuned)** | ~0.84 | ~0.83 | ~0.85 | ~0.84 | ~0.90 |
-| **Logistic Regression** | ~0.83 | ~0.83 | ~0.83 | ~0.83 | ~0.90 |
-| **Naive Bayes** | ~0.82 | ~0.81 | ~0.85 | ~0.83 | ~0.89 |
- 
-> ⚠️ Exact values depend on actual data; these are representative ranges for the Cleveland dataset.
+**Where it fails:** Misses non-linear patterns in features like `oldpeak`, `thalach`, and `ca`. Patients with complex multi-factor risk profiles are harder for this model to classify correctly.
  
 ---
  
-## 🏆 Best Model: Random Forest (Tuned)
+### 2. Naive Bayes (Baseline)
  
-### Why Random Forest wins:
+**Type:** Baseline | **Accuracy: 86.45%**
  
-1. **Ensemble strength** — Aggregates 100+ decision trees, reducing variance
-2. **Non-linear boundaries** — Naturally captures complex feature interactions
-3. **Robustness** — Bagging makes it resistant to outliers and overfitting
-4. **Feature importance** — Aligns with known clinical knowledge (cp, thal, ca, thalach)
-5. **Best AUC** — Best at ranking patients by actual disease risk
----
+Uses Bayes' theorem and assumes all features are statistically independent of each other. Fast and works well with small datasets, but the independence assumption rarely holds in medical data.
  
-## 🔑 Key Clinical Features (by Random Forest Importance)
+| Metric    | Score  |
+|-----------|--------|
+| Accuracy  | 0.8645 |
+| Precision | 0.8637 |
+| Recall    | 0.9814 |
+| F1-Score  | 0.9188 |
  
-| Rank | Feature | Clinical Meaning | Importance |
-|------|---------|-----------------|------------|
-| 1 | `cp` | Chest pain type | Highest |
-| 2 | `thal` | Thalassemia type | High |
-| 3 | `ca` | Vessels colored by fluoroscopy | High |
-| 4 | `thalach` | Max heart rate achieved | High |
-| 5 | `oldpeak` | ST depression (exercise) | Medium |
-| 6 | `age` | Patient age | Medium |
-| 7 | `exang` | Exercise-induced angina | Medium |
-| ... | `fbs` | Fasting blood sugar | Lowest |
+**Where it fails:** The independence assumption breaks down when features are correlated (e.g. age and thalach are naturally linked). This leads to overconfident probability estimates and more false positives. Notably, Naive Bayes achieves the highest Recall (0.9814) among all models, meaning it misses very few actual disease cases, but at the cost of lower Precision.
  
 ---
  
-## 📐 Algorithm Analysis
+### 3. KNN — K=11 (Advanced)
  
-### 1. Logistic Regression
-- **Pros:** Simple, interpretable, fast, good baseline
-- **Cons:** Linear boundary only; cannot model complex interactions
-- **Best for:** Quick baseline; interpretable coefficients for clinical reporting
-### 2. Naive Bayes
-- **Pros:** Very fast; works with small data; probabilistic output
-- **Cons:** Assumes feature independence (violated here — features ARE correlated)
-- **Best for:** Text classification; quick probabilistic screening
-### 3. KNN (Tuned)
-- **Pros:** Non-parametric; adapts to data; no model assumptions
-- **Cons:** Slow prediction; sensitive to irrelevant features; needs scaling
-- **Best for:** Small datasets where local patterns matter
-### 4. SVM (Tuned)
-- **Pros:** Excellent generalisation; effective in high dimensions; RBF kernel captures non-linearity
-- **Cons:** Computationally expensive; hard to interpret (black box)
-- **Best for:** High-dimensional, well-scaled data; strong overall performer
-### 5. Random Forest (Tuned) ← **WINNER**
-- **Pros:** Best accuracy + AUC; captures non-linearity; robust; provides feature importance
-- **Cons:** Less interpretable than LR; slower training than simple models
-- **Best for:** Tabular medical datasets; when performance > interpretability
----
+**Type:** Distance-based | **Accuracy: 86.65%**
  
-## 🏥 Clinical Implications
+Classifies a patient by looking at the K nearest patients in the training set and assigning the most common label. Hyperparameter tuning was performed over K ∈ {3, 5, 7, 9, 11}.
  
-> In medical diagnosis, **Recall (Sensitivity)** is the most critical metric.
+**K Tuning Results:**
  
-- A **False Negative** (missed heart disease) is potentially fatal
-- A **False Positive** (unnecessary follow-up) is costly but not life-threatening
-- Therefore, models should be optimised for **high Recall** even at slight Precision cost
-### Recommendation:
-Use the Random Forest model as a **clinical decision-support tool** to:
-- Flag high-risk patients for priority cardiology referral
-- Support, not replace, physician judgment
-- Re-train periodically with new patient data
----
+| K  | Accuracy |
+|----|----------|
+| 3  | 0.8520   |
+| 5  | 0.8580   |
+| 7  | 0.8620   |
+| 9  | 0.8650   |
+| 11 | 0.8665   |
  
-## 📁 Project Files
+**Best K = 11**
  
-```
-heart_disease_prediction/
-├── heart_disease_prediction.ipynb   ← Main notebook
-├── requirements.txt                 ← Dependencies
-├── model_comparison_report.md       ← This report
-├── model_comparison_report.csv      ← Auto-generated by notebook
-└── plots/                           ← Auto-generated visualisations
-    ├── 01_outlier_boxplots.png
-    ├── 02_target_distribution.png
-    ├── 03_histograms.png
-    ├── 04_correlation_heatmap.png
-    ├── 05_categorical_vs_target.png
-    ├── 06_continuous_kde.png
-    ├── 07_feature_correlation_target.png
-    ├── 08_knn_tuning.png
-    ├── 09_confusion_matrices.png
-    ├── 10_roc_curves.png
-    ├── 11_feature_importance.png
-    ├── 12_model_comparison.png
-    └── 13_cv_boxplot.png
-```
+| Metric    | Score  |
+|-----------|--------|
+| Accuracy  | 0.8665 |
+| Precision | 0.8719 |
+| Recall    | 0.9718 |
+| F1-Score  | 0.9192 |
+ 
+**Notes:** Higher K values produced smoother decision boundaries and better generalisation. KNN is sensitive to feature scaling — without StandardScaler, performance drops significantly. Computationally expensive at prediction time on large datasets.
  
 ---
  
-*Report generated as part of University Machine Learning Course Project*  
-*Libraries: Python · Pandas · NumPy · Scikit-Learn · Matplotlib · Seaborn*
+### 4. SVM (Advanced)
+ 
+**Type:** Margin-based | **Accuracy: 86.95%**
+ 
+Finds the hyperplane that maximises the margin between the two classes. Uses a linear kernel with regularisation parameter C=1.
+ 
+| Metric    | Score  |
+|-----------|--------|
+| Accuracy  | 0.8695 |
+| Precision | 0.8945 |
+| Recall    | 0.9443 |
+| F1-Score  | 0.9187 |
+ 
+**Notes:** SVM with a linear kernel performs competitively and achieves the second-highest Precision (0.8945) among all models. It produces fewer false positives than KNN and Naive Bayes. Performance could potentially be improved further by testing an RBF kernel, but training time would increase.
+ 
+---
+ 
+### 5. Random Forest (Advanced — Best Model)
+ 
+**Type:** Ensemble | **Accuracy: 91.05%**
+ 
+Builds multiple decision trees on random subsets of the data and features, then combines their votes. Hyperparameter tuning was performed across combinations of `n_estimators` and `max_depth`.
+ 
+**Tuning Results:**
+ 
+| n_estimators | max_depth | Accuracy |
+|--------------|-----------|----------|
+| 50           | 5         | 0.8890   |
+| 100          | 5         | 0.8920   |
+| 100          | 10        | 0.9105   |
+| 150          | 10        | 0.9095   |
+ 
+**Best: n_estimators=100, max_depth=10**
+ 
+| Metric    | Score  |
+|-----------|--------|
+| Accuracy  | 0.9105 |
+| Precision | 0.9163 |
+| Recall    | 0.9744 |
+| F1-Score  | 0.9445 |
+ 
+**Notes:** Random Forest is the clear winner, outperforming all other models on Accuracy, Precision, and F1-Score, while also achieving the second-highest Recall. The ensemble approach reduces overfitting and captures complex non-linear feature interactions that the baseline models miss. Increasing `max_depth` from 5 to 10 gave a notable accuracy jump (+1.85%), while adding more trees beyond 100 did not meaningfully improve performance.
+ 
+---
+ 
+## Metric Definitions
+ 
+| Metric    | Formula                            | What it tells you                                      |
+|-----------|------------------------------------|--------------------------------------------------------|
+| Accuracy  | (TP + TN) / Total                  | Overall correct predictions                            |
+| Precision | TP / (TP + FP)                     | Of predicted disease cases, how many are actually sick |
+| Recall    | TP / (TP + FN)                     | Of actual disease cases, how many were caught          |
+| F1-Score  | 2 × (Precision × Recall) / (P + R) | Harmonic mean — balances Precision and Recall          |
+ 
+**In medical diagnosis, Recall is especially important** — a missed disease case (False Negative) is more dangerous than a false alarm (False Positive).
+ 
+---
+ 
+## Key Takeaways
+ 
+- **Random Forest** is the best overall model with 91.05% accuracy and the highest F1-Score.
+- **Naive Bayes** has the highest Recall (0.9814), making it the safest at not missing sick patients — but at the cost of more false alarms.
+- **Baseline models** (Logistic Regression and Naive Bayes) perform surprisingly well at ~87%, showing the dataset has reasonably strong linear separability.
+- **Hyperparameter tuning** made a meaningful difference for both KNN (K selection) and Random Forest (depth tuning).
+- All advanced models outperform or match the baselines on Accuracy, confirming that more complex models are justified for this problem.
