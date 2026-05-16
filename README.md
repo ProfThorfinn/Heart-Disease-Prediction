@@ -1,5 +1,8 @@
-❤️ Heart Disease Prediction — Machine Learning Project
-🏗️ Project Folder Structure
+# ❤️ Heart Disease Prediction — Machine Learning Project
+ 
+## 🏗️ Project Folder Structure
+ 
+```
 heart_disease_prediction/
 │
 ├── 📓 heart_disease_prediction.ipynb   ← MAIN NOTEBOOK (start here)
@@ -22,23 +25,66 @@ heart_disease_prediction/
     ├── 11_feature_importance.png
     ├── 12_model_comparison.png
     └── 13_cv_boxplot.png
-
-🚀 Quick Start
-Step 1: Create a virtual environment (recommended)
-bashpython -m venv venv
+```
+ 
+---
+ 
+## 🚀 Quick Start
+ 
+### Step 1: Create a virtual environment (recommended)
+```bash
+python -m venv venv
 # Windows:
 venv\Scripts\activate
 # macOS/Linux:
 source venv/bin/activate
-Step 2: Install dependencies
-bashpip install -r requirements.txt
-Step 3: Launch Jupyter Notebook
-bashjupyter notebook heart_disease_prediction.ipynb
-Step 4: Run all cells
-Kernel → Restart & Run All
-
-📦 Libraries Used
-LibraryVersionPurposePython≥ 3.8Core languagepandas≥ 1.5Data manipulationnumpy≥ 1.23Numerical computingscikit-learn≥ 1.2ML algorithms & evaluationmatplotlib≥ 3.6Plottingseaborn≥ 0.12Statistical visualisationsjupyter≥ 1.0Notebook environment
-
-📚 Notebook Sections
-#SectionWhat it covers1Project IntroductionGoals, dataset overview, algorithm list2Import LibrariesAll imports with explanations3Load DatasetUCI Cleveland dataset loading + offline fallback4Data ExplorationShape, dtypes, missing values, class balance5Data CleaningMissing values, duplicates, type fixes, outlier detection6EDAHistograms, correlation heatmap, count plots, KDE plots7Feature SelectionCorrelation with target, feature ranking8Feature ScalingStandardScaler — why and how9Model TrainingAll 5 algorithms with explanations10Hyperparameter TuningGridSearchCV for KNN, SVM, Random Forest11Model EvaluationConfusion matrices, ROC curves, feature importance12Model ComparisonTable, grouped bar chart, CV boxplot13Final ConclusionAlgorithm analysis, clinical implications
+```
+ 
+### Step 2: Install dependencies
+```bash
+pip install -r requirements.txt
+```
+ 
+### Step 3: Launch Jupyter Notebook
+```bash
+jupyter notebook heart_disease_prediction.ipynb
+```
+ 
+### Step 4: Run all cells
+`Kernel → Restart & Run All`
+ 
+---
+ 
+## 📦 Libraries Used
+ 
+| Library | Version | Purpose |
+|---------|---------|---------|
+| Python | ≥ 3.8 | Core language |
+| pandas | ≥ 1.5 | Data manipulation |
+| numpy | ≥ 1.23 | Numerical computing |
+| scikit-learn | ≥ 1.2 | ML algorithms & evaluation |
+| matplotlib | ≥ 3.6 | Plotting |
+| seaborn | ≥ 0.12 | Statistical visualisations |
+| jupyter | ≥ 1.0 | Notebook environment |
+ 
+---
+ 
+## 📚 Notebook Sections
+ 
+| # | Section | What it covers |
+|---|---------|---------------|
+| 1 | Project Introduction | Goals, dataset overview, algorithm list |
+| 2 | Import Libraries | All imports with explanations |
+| 3 | Load Dataset | UCI Cleveland dataset loading + offline fallback |
+| 4 | Data Exploration | Shape, dtypes, missing values, class balance |
+| 5 | Data Cleaning | Missing values, duplicates, type fixes, outlier detection |
+| 6 | EDA | Histograms, correlation heatmap, count plots, KDE plots |
+| 7 | Feature Selection | Correlation with target, feature ranking |
+| 8 | Feature Scaling | StandardScaler — why and how |
+| 9 | Model Training | All 5 algorithms with explanations |
+| 10 | Hyperparameter Tuning | GridSearchCV for KNN, SVM, Random Forest |
+| 11 | Model Evaluation | Confusion matrices, ROC curves, feature importance |
+| 12 | Model Comparison | Table, grouped bar chart, CV boxplot |
+| 13 | Final Conclusion | Algorithm analysis, clinical implications |
+ 
+---
