@@ -1,5 +1,3 @@
-Here is the updated `README.md` reflecting the real-world dataset, the corrected file names, and the specific results from your latest model run.
-
 ---
 
 # Heart Disease Prediction using Machine Learning
